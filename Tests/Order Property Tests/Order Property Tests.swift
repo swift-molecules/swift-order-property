@@ -50,7 +50,7 @@ extension `Order Property Tests`.Unit.`Copyable Types` {
         var bob = Person(name: "Bob", age: 25)
 
         let byAge = Order.Comparator<Person> { lhs, rhs in
-            Comparison(comparing: lhs.age, to: rhs.age)
+            Comparison(lhs.age, rhs.age)
         }
 
         #expect(alice.order.isBefore(bob, by: byAge) == false)
@@ -63,7 +63,7 @@ extension `Order Property Tests`.Unit.`Copyable Types` {
         var bob = Person(name: "Bob", age: 25)
 
         let byAge = Order.Comparator<Person> { lhs, rhs in
-            Comparison(comparing: lhs.age, to: rhs.age)
+            Comparison(lhs.age, rhs.age)
         }
 
         #expect(alice.order.isAfter(bob, by: byAge) == true)
@@ -77,7 +77,7 @@ extension `Order Property Tests`.Unit.`Copyable Types` {
         let bob = Person(name: "Bob", age: 25)
 
         let byAge = Order.Comparator<Person> { lhs, rhs in
-            Comparison(comparing: lhs.age, to: rhs.age)
+            Comparison(lhs.age, rhs.age)
         }
 
         #expect(alice.order.isEquivalent(to: carol, by: byAge) == true)
@@ -90,10 +90,10 @@ extension `Order Property Tests`.Unit.`Copyable Types` {
         let bob = Person(name: "Bob", age: 25)
 
         let byAge = Order.Comparator<Person> { lhs, rhs in
-            Comparison(comparing: lhs.age, to: rhs.age)
+            Comparison(lhs.age, rhs.age)
         }
         let byName = Order.Comparator<Person> { lhs, rhs in
-            Comparison(comparing: lhs.name, to: rhs.name)
+            Comparison(lhs.name, rhs.name)
         }
 
         #expect(alice.order.isAfter(bob, by: byAge) == true)
@@ -105,90 +105,64 @@ extension `Order Property Tests`.Unit.`Copyable Types` {
 extension `Order Property Tests`.Unit.`Noncopyable Types` {
     @Test
     func `isBefore with explicit comparator`() {
-        var a = Token(id: 5)
-        var b = Token(id: 10)
-
         let comparator: Order.Comparator<Token> = .ascending
 
-        #expect(a.order.isBefore(b, by: comparator) == true)
-        #expect(b.order.isBefore(a, by: comparator) == false)
+        #expect(Token(id: 5).ordered().isBefore(Token(id: 10), by: comparator) == true)
+        #expect(Token(id: 10).ordered().isBefore(Token(id: 5), by: comparator) == false)
     }
 
     @Test
     func `isAfter with explicit comparator`() {
-        var a = Token(id: 5)
-        var b = Token(id: 10)
-
         let comparator: Order.Comparator<Token> = .ascending
 
-        #expect(a.order.isAfter(b, by: comparator) == false)
-        #expect(b.order.isAfter(a, by: comparator) == true)
+        #expect(Token(id: 5).ordered().isAfter(Token(id: 10), by: comparator) == false)
+        #expect(Token(id: 10).ordered().isAfter(Token(id: 5), by: comparator) == true)
     }
 
     @Test
     func `isEquivalent with explicit comparator`() {
-        var a = Token(id: 5)
-        let b = Token(id: 10)
-        let c = Token(id: 5)
-
         let comparator: Order.Comparator<Token> = .ascending
 
-        #expect(a.order.isEquivalent(to: c, by: comparator) == true)
-        #expect(a.order.isEquivalent(to: b, by: comparator) == false)
+        #expect(Token(id: 5).ordered().isEquivalent(to: Token(id: 5), by: comparator) == true)
+        #expect(Token(id: 5).ordered().isEquivalent(to: Token(id: 10), by: comparator) == false)
     }
 }
 
 extension `Order Property Tests`.Unit.`Comparison.Protocol Convenience` {
     @Test
     func `isBefore without explicit comparator`() {
-        var a = Token(id: 5)
-        var b = Token(id: 10)
-
-        #expect(a.order.isBefore(b) == true)
-        #expect(b.order.isBefore(a) == false)
+        #expect(Token(id: 5).ordered().isBefore(Token(id: 10)) == true)
+        #expect(Token(id: 10).ordered().isBefore(Token(id: 5)) == false)
     }
 
     @Test
     func `isAfter without explicit comparator`() {
-        var a = Token(id: 5)
-        var b = Token(id: 10)
-
-        #expect(a.order.isAfter(b) == false)
-        #expect(b.order.isAfter(a) == true)
+        #expect(Token(id: 5).ordered().isAfter(Token(id: 10)) == false)
+        #expect(Token(id: 10).ordered().isAfter(Token(id: 5)) == true)
     }
 
     @Test
     func `isEquivalent without explicit comparator`() {
-        var a = Token(id: 5)
-        let b = Token(id: 10)
-        let c = Token(id: 5)
-
-        #expect(a.order.isEquivalent(to: c) == true)
-        #expect(a.order.isEquivalent(to: b) == false)
+        #expect(Token(id: 5).ordered().isEquivalent(to: Token(id: 5)) == true)
+        #expect(Token(id: 5).ordered().isEquivalent(to: Token(id: 10)) == false)
     }
 }
 
 extension `Order Property Tests`.Unit.`Descending Order` {
     @Test
     func `isBefore with descending comparator`() {
-        var a = Token(id: 5)
-        var b = Token(id: 10)
-
         let descending: Order.Comparator<Token> = .descending
 
-        #expect(a.order.isBefore(b, by: descending) == false)
-        #expect(b.order.isBefore(a, by: descending) == true)
+        #expect(Token(id: 5).ordered().isBefore(Token(id: 10), by: descending) == false)
+        #expect(Token(id: 10).ordered().isBefore(Token(id: 5), by: descending) == true)
     }
 
     @Test
     func `isAfter with descending comparator`() {
-        var a = Token(id: 5)
-        var b = Token(id: 10)
-
         let descending: Order.Comparator<Token> = .descending
 
-        #expect(a.order.isAfter(b, by: descending) == true)
-        #expect(b.order.isAfter(a, by: descending) == false)
+        #expect(Token(id: 5).ordered().isAfter(Token(id: 10), by: descending) == true)
+        #expect(Token(id: 10).ordered().isAfter(Token(id: 5), by: descending) == false)
     }
 }
 
@@ -203,7 +177,7 @@ extension `Order Property Tests`.Unit.`Orderable Protocol` {
         let other = Sample(x: 5)
 
         let comparator = Order.Comparator<Sample> { lhs, rhs in
-            Comparison(comparing: lhs.x, to: rhs.x)
+            Comparison(lhs.x, rhs.x)
         }
 
         #expect(value.order.isAfter(other, by: comparator) == true)
@@ -219,10 +193,10 @@ extension `Order Property Tests`.Unit.`Orderable Protocol` {
         let low = Resource(priority: 1)
 
         let byPriority = Order.Comparator<Resource> { lhs, rhs in
-            Comparison(comparing: lhs.priority, to: rhs.priority)
+            Comparison(lhs.priority, rhs.priority)
         }
 
-        #expect(high.order.isAfter(low, by: byPriority) == true)
+        #expect(high.ordered().isAfter(low, by: byPriority) == true)
     }
 }
 

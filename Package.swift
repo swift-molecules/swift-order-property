@@ -19,7 +19,7 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-molecules/swift-order.git",
+            url: "https://github.com/swift-atoms/swift-order.git",
             branch: "main"
         ),
         .package(
